@@ -13,7 +13,6 @@ export const Webcam = (props: WebcamProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
     const updateWebcamStream = async () => {
-        console.log('updateWebcamStream');
         if (webcamStream) // stop the current stream
             webcamStream.getTracks().forEach(track => track.stop());
         
@@ -28,7 +27,6 @@ export const Webcam = (props: WebcamProps) => {
     };
 
     const getVideoInputs = async () => {
-        console.log('getVideoInputs');
         if (!videoInputs) {
             const allDevives = 
                 await navigator
