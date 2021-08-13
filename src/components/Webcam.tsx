@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 
 interface WebcamProps {
-    getFaceArea?: () => ({x: number, y: number, w: number, h: number} | null)
+    getFaceArea?: () => ({x: number, y: number, w: number, h: number} | null),
+    sendImage?: (img: string) => void,
+    mirrorFrames?: boolean
 };
 
 export const Webcam = (props: WebcamProps) => {
@@ -11,6 +13,7 @@ export const Webcam = (props: WebcamProps) => {
     const selectRef = useRef<HTMLSelectElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const hiddenCanvasRef = useRef<HTMLCanvasElement>(null);
 
     const updateWebcamStream = async () => {
         if (webcamStream) // stop the current stream
@@ -63,10 +66,27 @@ export const Webcam = (props: WebcamProps) => {
             const faceArea = props.getFaceArea();
             if (faceArea) {
                 context.rect(faceArea.x, faceArea.y, faceArea.w, faceArea.h);
-                context.lineWidth = 6;
+                context.lineWidth = 2;
                 context.strokeStyle = 'red';
                 context.stroke();
             }
+        }
+
+        // resize and convert the frame to jpeg, then send it 
+        // TODO: mirror
+        if (props.sendImage) {
+            const hiddenCanvas = hiddenCanvasRef.current!;
+            const hcontext = hiddenCanvas.getContext('2d')!;
+            const 
+                ratio = video.videoHeight / video.videoWidth,
+                w = 800,
+                h = ratio * w;
+            hiddenCanvas.width = w;
+            hiddenCanvas.height = h;
+            hcontext.drawImage(video, 0, 0, w, h);
+
+            const res = hiddenCanvas.toDataURL('image/jpeg', 1.0);
+            props.sendImage(res);
         }
 
         setTimeout(renderFrame, 100); // re-render in 100ms
@@ -76,6 +96,7 @@ export const Webcam = (props: WebcamProps) => {
         <div>
             <video autoPlay={true} className="hidden" ref={videoRef} onPlay={renderFrame} muted />
             <canvas ref={canvasRef} />
+            <canvas ref={hiddenCanvasRef} className="hidden" />
             <select ref={selectRef} onChange={(e) => setActiveDeviceId(e.target.value)}>
                 { videoInputs?.map(x => <option value={x.deviceId}> {x.label || `Camera ${x.deviceId}`} </option>)} 
             </select>
