@@ -6,20 +6,46 @@ interface WebcamProps {
 
 export const Webcam = (props: WebcamProps) => {
     const [webcamStream, setWebcamStream] = useState<MediaStream | null>(null);
+    const [videoInputs, setVideoInputs] = useState<Array<MediaDeviceInfo> | null>(null);
+    const [activeDeviceId, setActiveDeviceId] = useState<string | null>(null);
+    const selectRef = useRef<HTMLSelectElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
+    const updateWebcamStream = async () => {
+        console.log('updateWebcamStream');
+        if (webcamStream) // stop the current stream
+            webcamStream.getTracks().forEach(track => track.stop());
+        
+        setWebcamStream(
+            await navigator
+                .mediaDevices
+                .getUserMedia({
+                    video: { deviceId: { exact: activeDeviceId ?? undefined } },
+                    audio: false
+                })
+        );
+    };
+
+    const getVideoInputs = async () => {
+        console.log('getVideoInputs');
+        if (!videoInputs) {
+            const allDevives = 
+                await navigator
+                    .mediaDevices
+                    .enumerateDevices();
+            
+            setVideoInputs(allDevives.filter(x => x.kind === 'videoinput'));
+        }
+    };
+
     useEffect(() => { // get the webcam stream
-        (async () => { 
-            if (!webcamStream) {
-                setWebcamStream(
-                    await navigator
-                        .mediaDevices
-                        .getUserMedia({ video: true, audio: false })
-                );
-            }
-        }) ();
+        getVideoInputs();
     }, []);
+
+    useEffect(() => {
+        updateWebcamStream();
+    }, [activeDeviceId]);
 
     useEffect(() => { // play the webcam stream in the hidden video tag
         videoRef.current!.srcObject = webcamStream;
@@ -52,6 +78,9 @@ export const Webcam = (props: WebcamProps) => {
         <div>
             <video autoPlay={true} className="hidden" ref={videoRef} onPlay={renderFrame} muted />
             <canvas ref={canvasRef} />
+            <select ref={selectRef} onChange={(e) => setActiveDeviceId(e.target.value)}>
+                { videoInputs?.map(x => <option value={x.deviceId}> {x.label || `Camera ${x.deviceId}`} </option>)} 
+            </select>
         </div>
     );
 }
