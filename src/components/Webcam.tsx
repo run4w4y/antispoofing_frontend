@@ -2,14 +2,15 @@ import { useState, useEffect, useRef } from 'react';
 
 interface WebcamProps {
     getFaceArea?: () => ({x: number, y: number, w: number, h: number} | null),
-    sendImage?: (img: string) => void,
-    mirrorFrames?: boolean
+    sendImage?: (img: string) => void
 };
 
 export const Webcam = (props: WebcamProps) => {
     const [webcamStream, setWebcamStream] = useState<MediaStream | null>(null);
     const [videoInputs, setVideoInputs] = useState<Array<MediaDeviceInfo> | null>(null);
     const [activeDeviceId, setActiveDeviceId] = useState<string | null>(null);
+    const [mirrored, setMirrored] = useState<boolean>(false);
+    const mirroredRef = useRef<HTMLInputElement>(null);
     const selectRef = useRef<HTMLSelectElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -60,7 +61,10 @@ export const Webcam = (props: WebcamProps) => {
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
 
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        if (mirroredRef.current?.checked)
+            context.scale(-1, 1);
+
+        context.drawImage(video, mirroredRef.current?.checked ? -1 * canvas.width : 0, 0, canvas.width, canvas.height);
 
         if (props.getFaceArea) {
             const faceArea = props.getFaceArea();
@@ -100,6 +104,15 @@ export const Webcam = (props: WebcamProps) => {
             <select ref={selectRef} onChange={(e) => setActiveDeviceId(e.target.value)}>
                 { videoInputs?.map(x => <option value={x.deviceId}> {x.label || `Camera ${x.deviceId}`} </option>)} 
             </select>
+            <label>
+                Mirror image:
+                <input type='checkbox' ref={mirroredRef} checked={mirrored} onChange={
+                    (e) => {
+                        setMirrored(e.target.checked);
+                        console.log(mirrored);
+                    }
+                } />
+            </label> 
         </div>
     );
 }
