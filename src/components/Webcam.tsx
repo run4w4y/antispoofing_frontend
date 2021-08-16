@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 interface WebcamProps {
     getFaceArea?: () => ({x: number, y: number, w: number, h: number} | null),
