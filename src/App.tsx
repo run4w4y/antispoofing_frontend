@@ -1,9 +1,14 @@
 import React from 'react';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import { WebcamPage } from './views';
 
 function App() {
   return (
-    <WebcamPage />
+    <Router>
+      <Switch>
+        <Route exact path='/:faceID'> <WebcamPage /> </Route>
+      </Switch>
+    </Router>
   );
 }
 

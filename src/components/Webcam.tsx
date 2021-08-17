@@ -1,8 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 interface WebcamProps {
-    getFaceArea?: () => ({x: number, y: number, w: number, h: number} | null),
-    sendImage?: (img: string) => void
+    faceID: string,
+    submitImage?: (img: string, id: string) => any
+};
+
+interface FaceArea {
+    color: string,
+    left: number,
+    top: number,
+    right: number,
+    bottom: number
 };
 
 export const Webcam = (props: WebcamProps) => {
@@ -10,6 +18,8 @@ export const Webcam = (props: WebcamProps) => {
     const [videoInputs, setVideoInputs] = useState<Array<MediaDeviceInfo> | null>(null);
     const [activeDeviceId, setActiveDeviceId] = useState<string | null>(null);
     const [mirrored, setMirrored] = useState<boolean>(false);
+    const [currentFrame, setCurrentFrame] = useState<number>(0);
+    const [currentFaceArea, setCurrentFaceArea] = useState<FaceArea | null>(null);
     const mirroredRef = useRef<HTMLInputElement>(null);
     const selectRef = useRef<HTMLSelectElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -54,31 +64,39 @@ export const Webcam = (props: WebcamProps) => {
         videoRef.current?.play();
     }, [webcamStream]);
 
-    const renderFrame = () => { // render the current webcam stream frame in the canvas 
+    useEffect(() => {
         const video = videoRef.current!;
         const canvas = canvasRef.current!;
         const context = canvas.getContext('2d')!;
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
+        
+        const renderFrame = () => { // render the current webcam stream frame in the canvas 
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
 
-        if (mirroredRef.current?.checked)
-            context.scale(-1, 1);
+            if (mirroredRef.current?.checked)
+                context.scale(-1, 1);
 
-        context.drawImage(video, mirroredRef.current?.checked ? -1 * canvas.width : 0, 0, canvas.width, canvas.height);
+            context.drawImage(video, mirroredRef.current?.checked ? -1 * canvas.width : 0, 0, canvas.width, canvas.height);
+        };
 
-        if (props.getFaceArea) {
-            const faceArea = props.getFaceArea();
-            if (faceArea) {
-                context.rect(faceArea.x, faceArea.y, faceArea.w, faceArea.h);
+        const drawFaceArea = () => {
+            // TODO: mirror
+            if (currentFaceArea) {
+                context.rect(
+                    currentFaceArea.left, 
+                    currentFaceArea.top, 
+                    currentFaceArea.right, 
+                    currentFaceArea.bottom
+                );
                 context.lineWidth = 2;
-                context.strokeStyle = 'red';
+                context.strokeStyle = currentFaceArea.color;
                 context.stroke();
             }
-        }
+        };
 
-        // resize and convert the frame to jpeg, then send it 
-        // TODO: mirror
-        if (props.sendImage) {
+        const encodeFrame = () => {
+            // resize and convert the frame to jpeg, then send it 
+            // TODO: mirror
             const hiddenCanvas = hiddenCanvasRef.current!;
             const hcontext = hiddenCanvas.getContext('2d')!;
             const 
@@ -90,15 +108,30 @@ export const Webcam = (props: WebcamProps) => {
             hcontext.drawImage(video, 0, 0, w, h);
 
             const res = hiddenCanvas.toDataURL('image/jpeg', 1.0);
-            props.sendImage(res);
-        }
+            return res;
+        };
 
-        setTimeout(renderFrame, 100); // re-render in 100ms
-    };
+        renderFrame();
+        drawFaceArea();
+        const submit = async () => {
+            const result = props.submitImage!(encodeFrame(), props.faceID);
+            console.log(result);
+            setCurrentFaceArea(result.bbox);
+        };
+
+        if (props.submitImage)
+            submit();
+        
+        const timeout = setTimeout(
+            () => setCurrentFrame((prev) => prev + 1)
+        , 100); // re-render in 100ms
+        return () => clearTimeout(timeout);
+
+    }, [currentFrame]);
 
     return (
         <div>
-            <video autoPlay={true} className="hidden" ref={videoRef} onPlay={renderFrame} muted />
+            <video autoPlay={true} className="hidden" ref={videoRef} muted />
             <canvas ref={canvasRef} />
             <canvas ref={hiddenCanvasRef} className="hidden" />
             <select ref={selectRef} onChange={(e) => setActiveDeviceId(e.target.value)}>

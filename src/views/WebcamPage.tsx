@@ -1,21 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation, useParams } from 'react-router-dom';
 import { Webcam } from '../components'
+import { submitImage } from '../faceAPI'
 
 export function WebcamPage() {
-    let prev = {x: 10, y: 10};
+    const location = useLocation();
+    const seed = new URLSearchParams(location.search).get('seed');
+    const { faceID } = useParams<{ faceID: string }>();
 
-    const f = () => {
-        prev.x += 1;
-        return {
-            ...prev,
-            h: 20,
-            w: 30
-        }
-    }
-
+    if (!faceID || !seed)
+        return <div> 404 </div>;
+    
     return (
         <div> 
-            <Webcam getFaceArea={f} />
+            <Webcam faceID={faceID} submitImage={submitImage} />
         </div>
     );
 }
