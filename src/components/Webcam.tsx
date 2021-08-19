@@ -94,14 +94,15 @@ export const Webcam = (props: WebcamProps) => {
 
         const drawFaceArea = () => {
             if (currentFaceArea) {
-                context.rect(
-                    currentFaceArea.left * scaleRatio - (mirroredRef.current?.checked ? canvas.width : 0), 
-                    currentFaceArea.top * scaleRatio, 
-                    (currentFaceArea.right - currentFaceArea.left) * scaleRatio, 
-                    (currentFaceArea.bottom - currentFaceArea.top) * scaleRatio
-                );
-                context.lineWidth = 2;
+                const ratio2 = canvas.width / 600;
                 context.strokeStyle = currentFaceArea.color;
+                context.lineWidth = 2;
+                context.rect(
+                    currentFaceArea.left * ratio2 - (mirroredRef.current?.checked ? canvas.width : 0), 
+                    currentFaceArea.top * ratio2, 
+                    (currentFaceArea.right - currentFaceArea.left) * ratio2, 
+                    (currentFaceArea.bottom - currentFaceArea.top) * ratio2
+                );
                 context.stroke();
             }
         };
@@ -130,7 +131,6 @@ export const Webcam = (props: WebcamProps) => {
         drawFaceArea();
         const submit = async () => {
             const result = await props.submitImage!(encodeFrame(), props.faceID);
-            console.log(result);
             const isSuccessful = result.spoofing < 0.3 && result.face_score < 0.7;
             setCurrentFaceArea({
                 ...result.bbox,
@@ -185,7 +185,6 @@ export const Webcam = (props: WebcamProps) => {
                                 <input className="flex-col" type='checkbox' ref={mirroredRef} checked={mirrored} onChange={
                                     (e) => {
                                         setMirrored(e.target.checked);
-                                        console.log(mirrored);
                                     }
                                 } />
                             </label> 

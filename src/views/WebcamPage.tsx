@@ -5,7 +5,7 @@ import { submitImage } from '../faceAPI'
 
 export function WebcamPage() {
     const location = useLocation();
-    const seed = new URLSearchParams(location.search).get('seed');
+    const seed = new URLSearchParams(location.search).get('key');
     const { faceID } = useParams<{ faceID: string }>();
     const [ expired, setExpired ] = useState(false);
     const [ passed, setPassed ] = useState(false);
@@ -17,7 +17,7 @@ export function WebcamPage() {
         return <div>Time limit was reached.</div>;
 
     if (passed)
-        return <div>5 successful attempts were reached, here's your key: </div>;
+        return <div>5 successful attempts were reached, here's your key: {atob(seed + '|>*<|' + 'aaaaa')} </div>;
 
     return (
         <div> 
