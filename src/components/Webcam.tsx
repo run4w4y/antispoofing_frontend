@@ -71,6 +71,11 @@ export const Webcam = (props: WebcamProps) => {
     }, [webcamStream]);
 
     useEffect(() => {
+        if (successCount >= 5 && props.callback)
+            props.callback();
+    }, [successCount]);
+
+    useEffect(() => {
         const video = videoRef.current!;
         const canvas = canvasRef.current!;
         const context = canvas.getContext('2d')!;
