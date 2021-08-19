@@ -88,7 +88,6 @@ export const Webcam = (props: WebcamProps) => {
         };
 
         const drawFaceArea = () => {
-            // TODO: mirror
             if (currentFaceArea) {
                 context.rect(
                     currentFaceArea.left * scaleRatio - (mirroredRef.current?.checked ? canvas.width : 0), 
@@ -104,7 +103,6 @@ export const Webcam = (props: WebcamProps) => {
 
         const encodeFrame = () => {
             // resize and convert the frame to jpeg, then send it 
-            // TODO: mirror
             const hiddenCanvas = hiddenCanvasRef.current!;
             const hcontext = hiddenCanvas.getContext('2d')!;
             const 
@@ -113,7 +111,11 @@ export const Webcam = (props: WebcamProps) => {
                 h = ratio * w;
             hiddenCanvas.width = w;
             hiddenCanvas.height = h;
+
             hcontext.drawImage(video, 0, 0, w, h);
+            // if (mirroredRef.current?.checked)
+            //     hcontext.scale(-1, 1);
+            // hcontext.drawImage(video, mirroredRef.current?.checked ? -1 * hiddenCanvas.width : 0, 0, w, h);
 
             const res = hiddenCanvas.toDataURL('image/jpeg', 1.0);
             return res;
@@ -124,12 +126,15 @@ export const Webcam = (props: WebcamProps) => {
         const submit = async () => {
             const result = await props.submitImage!(encodeFrame(), props.faceID);
             console.log(result);
+            const isSuccessful = result.spoofing < 0.3 && result.face_score < 0.7;
             setCurrentFaceArea({
                 ...result.bbox,
-                color: result.spoofing < 0.5 ? 'green' : 'blue'
+                color: isSuccessful ? 'green' : 'blue'
             });
             setResultFaceScore(result.face_score);
             setResultSpoofing(result.spoofing);
+            if (isSuccessful)
+                setSuccessCount(prev => prev + 1);
         };
 
         if (props.submitImage && currentFrame % 15 === 0)
@@ -142,7 +147,6 @@ export const Webcam = (props: WebcamProps) => {
 
     }, [currentFrame]);
 
-    // TODO: optimize for phones
     return (
         <div>
             <video autoPlay={true} className="hidden" ref={videoRef} muted />
@@ -156,7 +160,7 @@ export const Webcam = (props: WebcamProps) => {
                             <b>Successful attemps:</b> {successCount}
                         </li>
                         <li>
-                            <b>face_score:</b> {resultFaceScore}
+                            {!resultFaceScore || resultFaceScore > 0.7 ? <b> Not target face </b> : <b> Target face </b>}
                         </li>
                         <li>
                             <b>spoofing:</b> {resultSpoofing}
