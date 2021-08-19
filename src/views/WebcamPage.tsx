@@ -25,7 +25,7 @@ export function WebcamPage() {
                 <div>
                     <b>Time left:</b> 
                     <br />
-                    <Timer seconds={600} callback={() => setExpired(true)} />
+                    <Timer seconds={120} callback={() => setExpired(true)} />
                 </div>
             </Webcam>
         </div>
