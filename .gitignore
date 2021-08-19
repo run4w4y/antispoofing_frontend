@@ -21,3 +21,6 @@ yarn-debug.log*
 yarn-error.log*
 
 .vscode
+video_test.py
+example_request.json
+*.jpg
