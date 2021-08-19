@@ -17,7 +17,7 @@ export function WebcamPage() {
         return <div>Time limit was reached.</div>;
 
     if (passed)
-        return <div>You passed, here's you key: </div>;
+        return <div>5 successful attempts were reached, here's your key: </div>;
 
     return (
         <div> 
