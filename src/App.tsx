@@ -6,7 +6,7 @@ function App() {
   return (
     <Router>
       <Switch>
-        <Route exact path='/:faceID'> <WebcamPage /> </Route>
+        <Route path='/'> <WebcamPage /> </Route>
       </Switch>
     </Router>
   );

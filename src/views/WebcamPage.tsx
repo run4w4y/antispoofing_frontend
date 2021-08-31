@@ -6,7 +6,8 @@ import { submitImage } from '../faceAPI'
 export function WebcamPage() {
     const location = useLocation();
     const seed = new URLSearchParams(location.search).get('key');
-    const { faceID } = useParams<{ faceID: string }>();
+    // const { faceID } = useParams<{ faceID: string }>();
+    const faceID = new URLSearchParams(location.search).get('faceid');
     const [ expired, setExpired ] = useState(false);
     const [ passed, setPassed ] = useState(false);
 
