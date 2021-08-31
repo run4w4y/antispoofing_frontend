@@ -1,4 +1,4 @@
-const API_URL = 'http://91.232.134.183:8080/predictions/biometric'
+const API_URL = 'https://toloka.suricatvision.com:8443/predictions/biometric'
 
 export const submitImage = async (imageURL: string, id: string) => {
     const imageEncoded = imageURL.split(',')[1];
