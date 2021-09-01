@@ -11,14 +11,14 @@ export function WebcamPage() {
     const [ expired, setExpired ] = useState(false);
     const [ passed, setPassed ] = useState(false);
 
-    if (!faceID || !seed)
-        return <div></div>;
-    
     if (expired)
         return <div>Time limit was reached.</div>;
 
     if (passed)
-        return <div>5 successful attempts were reached, here's your key: {atob(seed + '|>*<|' + 'aaaaa')} </div>;
+        return <div>5 successful attempts were reached, here's your key: {btoa(seed + '|>*<|' + 'aaaaa')} </div>;
+
+    if (!faceID || !seed)
+        return <div></div>;
 
     return (
         <div> 
@@ -26,7 +26,7 @@ export function WebcamPage() {
                 <div>
                     <b>Time left:</b> 
                     <br />
-                    <Timer seconds={120} callback={() => setExpired(true)} />
+                    <Timer seconds={900} callback={() => setExpired(true)} />
                 </div>
             </Webcam>
         </div>
