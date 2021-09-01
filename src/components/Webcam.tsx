@@ -162,10 +162,10 @@ export const Webcam = (props: WebcamProps) => {
                 <div className="col-span-2 lg:col-span-1 w-50 p-6 bg-gray-100">
                     <ul>
                         <li>
-                            <b>Successful attemps:</b> {successCount}
+                            <b>Successful attemps:</b> {successCount} out of 5
                         </li>
                         <li>
-                            {!resultFaceScore || resultFaceScore > 0.7 ? <b> Not target face </b> : <b> Target face </b>}
+                            {!resultFaceScore || resultFaceScore > 0.7 ? <b> Not target face - open the picture on another device </b> : <b> Target face </b>}
                         </li>
                         <li>
                             <b>spoofing:</b> {resultSpoofing}
