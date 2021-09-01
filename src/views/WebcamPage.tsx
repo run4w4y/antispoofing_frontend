@@ -37,7 +37,7 @@ export function WebcamPage() {
 
     return (
         <div> 
-            <Webcam callback={() => setPassed(true)} faceID={faceID} submitImage={submitImage}>
+            <Webcam callback={() => setPassed(true)} expiredCallback={() => setExpired(true)} faceID={faceID} submitImage={submitImage}>
                 <div>
                     <b>{t('webcam.view.timer.title')}</b> 
                     <br />

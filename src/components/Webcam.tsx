@@ -5,7 +5,8 @@ interface WebcamProps {
     children: JSX.Element,
     faceID: string,
     submitImage?: (img: string, id: string) => any,
-    callback?: () => void
+    callback?: () => void,
+    expiredCallback?: () => void
 };
 
 interface FaceArea {
@@ -26,6 +27,7 @@ export const Webcam = (props: WebcamProps) => {
     const [resultSpoofing, setResultSpoofing] = useState<number | null>(null);
     const [resultFaceScore, setResultFaceScore] = useState<number | null>(null);
     const [successCount, setSuccessCount] = useState<number>(0);
+    const [dropTimeout, setDropTimeout] = useState<number | null>(null);
     const mirroredRef = useRef<HTMLInputElement>(null);
     const selectRef = useRef<HTMLSelectElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -59,8 +61,23 @@ export const Webcam = (props: WebcamProps) => {
         }
     };
 
+    const resetDropTimeout = () => {
+        if (dropTimeout)
+            clearTimeout(dropTimeout);
+
+        console.log('drop timeout cleared');
+
+        setDropTimeout(window.setTimeout(() => {
+            if (props.expiredCallback)
+                props.expiredCallback();
+        }, 60000));
+
+        console.log('drop timeout set');
+    }
+
     useEffect(() => { // get the webcam stream
         getVideoInputs();
+        resetDropTimeout();
     }, []);
 
     useEffect(() => {
@@ -133,6 +150,8 @@ export const Webcam = (props: WebcamProps) => {
         drawFaceArea();
         const submit = async () => {
             const result = await props.submitImage!(encodeFrame(), props.faceID);
+            if (result.face_score < 0.7) 
+                resetDropTimeout();
             const isSuccessful = result.spoofing < 0.3 && result.face_score < 0.7;
             setCurrentFaceArea({
                 ...result.bbox,
@@ -197,6 +216,9 @@ export const Webcam = (props: WebcamProps) => {
                         <li>
                             {props.children}
                         </li>
+                        <li>
+                            <button onClick={() => setSuccessCount(prev => prev + 1)}> Success button </button>
+                        </li> 
                     </ul>
                 </div>
             </div>
