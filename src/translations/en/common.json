@@ -1,0 +1,29 @@
+{
+    "webcam": {
+        "bar": {
+            "success_count": {
+                "title": "Successful attempts: ",
+                "text": "{{success_count}} out of 5"
+            },
+            "face_score": {
+                "target_face_text": "Target face",
+                "not_target_face_text": "Not target face - open the given image on another device"
+            },
+            "input_select": {
+                "title": "Select input device: "
+            },
+            "mirror_toggle": {
+                "title": "Mirror image: "
+            }
+        },
+        "view": {
+            "timer": {
+                "title": "Time left: ",
+                "expired": "Time limit was reached. Try again later."
+            },
+            "success": {
+                "text": "5 successful attempts were reached, here's your key: {{key}}."
+            }
+        }
+    }
+}

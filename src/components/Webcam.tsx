@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface WebcamProps {
     children: JSX.Element,
@@ -31,6 +32,7 @@ export const Webcam = (props: WebcamProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const hiddenCanvasRef = useRef<HTMLCanvasElement>(null);
     const canvasContainerRef = useRef<HTMLDivElement>(null);
+    const {t, i18n} = useTranslation('common');
 
     const updateWebcamStream = async () => {
         if (webcamStream) // stop the current stream
@@ -162,17 +164,20 @@ export const Webcam = (props: WebcamProps) => {
                 <div className="col-span-2 lg:col-span-1 w-50 p-6 bg-gray-100">
                     <ul>
                         <li>
-                            <b>Successful attemps:</b> {successCount} out of 5
+                            <b>{t('webcam.bar.success_count.title')}</b> 
+                            {t('webcam.bar.success_count.text', {success_count: successCount})}
                         </li>
                         <li>
-                            {!resultFaceScore || resultFaceScore > 0.7 ? <b> Not target face - open the picture on another device </b> : <b> Target face </b>}
+                            {!resultFaceScore || resultFaceScore > 0.7 ? 
+                            <b> {t('webcam.bar.face_score.not_target_face_text')} </b> : 
+                            <b> {t('webcam.bar.face_score.target_face_text')} </b>}
                         </li>
                         <li>
                             <b>spoofing:</b> {resultSpoofing}
                         </li>
                         <li>
                             <label>
-                                <b>Select input:</b>
+                                <b>{t('webcam.bar.input_select.title')}</b>
                                 <br />
                                 <select ref={selectRef} onChange={(e) => setActiveDeviceId(e.target.value)}>
                                     { videoInputs?.map(x => <option value={x.deviceId}> {x.label || `Camera ${x.deviceId}`} </option>)} 
@@ -181,7 +186,7 @@ export const Webcam = (props: WebcamProps) => {
                         </li>
                         <li>
                             <label className="flex items-center">
-                                <b className="pr-2 flex-col">Mirror image:</b>
+                                <b className="pr-2 flex-col">{t('webcam.bar.mirror_toggle.title')}</b>
                                 <input className="flex-col" type='checkbox' ref={mirroredRef} checked={mirrored} onChange={
                                     (e) => {
                                         setMirrored(e.target.checked);
