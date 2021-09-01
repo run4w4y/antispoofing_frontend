@@ -11,22 +11,29 @@ export function WebcamPage() {
     const faceID = new URLSearchParams(location.search).get('faceid');
     const [ expired, setExpired ] = useState(false);
     const [ passed, setPassed ] = useState(false);
-    const {t, i18n} = useTranslation('common');
+    const { t, i18n } = useTranslation('common');
 
     useEffect(() => {
         i18n.changeLanguage(language ?? 'en');
     }, []);
 
+    if (!faceID || !seed)
+        return <div></div>;
+
     if (expired)
         return <div>{t('webcam.view.timer.expired')}</div>;
 
     if (passed) {
-        const res = seed + '|>*<|' + 'aaaaa';
-        return <div>{t('webcam.view.success.text', {key: btoa(res)})} </div>;
+        const res = btoa(atob(seed) + '|>*<|' + 'aaaaa');
+        return <div>
+            {t('webcam.view.success.text', {key: res})} 
+            <button className="pl-2 underline text-gray-600" onClick={async () => {
+                await navigator.clipboard.writeText(res);
+            }}> 
+                {t('webcam.view.success.copy_button')} 
+            </button>
+        </div>;
     }
-
-    if (!faceID || !seed)
-        return <div></div>;
 
     return (
         <div> 

@@ -22,7 +22,8 @@
                 "expired": "Time limit was reached. Try again later."
             },
             "success": {
-                "text": "5 successful attempts were reached, here's your key: {{key}}."
+                "text": "5 successful attempts were reached, here's your key: {{key}}",
+                "copy_button": "Copy to clipboard"
             }
         }
     }
