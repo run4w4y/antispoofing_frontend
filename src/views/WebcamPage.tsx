@@ -12,13 +12,18 @@ export function WebcamPage() {
     const [ expired, setExpired ] = useState(false);
     const [ passed, setPassed ] = useState(false);
     const {t, i18n} = useTranslation('common');
-    i18n.changeLanguage(language ?? 'en');
+
+    useEffect(() => {
+        i18n.changeLanguage(language ?? 'en');
+    }, []);
 
     if (expired)
         return <div>{t('webcam.view.timer.expired')}</div>;
 
-    if (passed)
-        return <div>{t('webcam.view.success.text', {key: btoa(seed + '|>*<|' + 'aaaaa')})} </div>;
+    if (passed) {
+        const res = seed + '|>*<|' + 'aaaaa';
+        return <div>{t('webcam.view.success.text', {key: btoa(res)})} </div>;
+    }
 
     if (!faceID || !seed)
         return <div></div>;
