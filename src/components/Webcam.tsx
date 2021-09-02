@@ -21,7 +21,7 @@ export const Webcam = (props: WebcamProps) => {
     const [webcamStream, setWebcamStream] = useState<MediaStream | null>(null);
     const [videoInputs, setVideoInputs] = useState<Array<MediaDeviceInfo> | null>(null);
     const [activeDeviceId, setActiveDeviceId] = useState<string | null>(null);
-    const [mirrored, setMirrored] = useState<boolean>(false);
+    const [mirrored, setMirrored] = useState<boolean>(true);
     const [currentFrame, setCurrentFrame] = useState<number>(0);
     const [currentFaceArea, setCurrentFaceArea] = useState<FaceArea | null>(null);
     const [resultSpoofing, setResultSpoofing] = useState<number | null>(null);
@@ -175,7 +175,7 @@ export const Webcam = (props: WebcamProps) => {
 
     return (
         <div>
-            <video autoPlay={true} className="hidden" ref={videoRef} muted />
+            <video autoPlay={true} className="hidden" ref={videoRef} muted playsInline />
             <div className="grid grid-cols-2">
                 <div ref={canvasContainerRef} className="col-span-2 lg:col-span-1">
                     <canvas ref={canvasRef} />
