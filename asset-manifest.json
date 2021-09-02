@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/antispoofing_frontend/static/css/main.31026e0a.chunk.css",
-    "main.js": "/antispoofing_frontend/static/js/main.33fac89e.chunk.js",
-    "main.js.map": "/antispoofing_frontend/static/js/main.33fac89e.chunk.js.map",
+    "main.js": "/antispoofing_frontend/static/js/main.b97c128a.chunk.js",
+    "main.js.map": "/antispoofing_frontend/static/js/main.b97c128a.chunk.js.map",
     "runtime-main.js": "/antispoofing_frontend/static/js/runtime-main.4e3ca355.js",
     "runtime-main.js.map": "/antispoofing_frontend/static/js/runtime-main.4e3ca355.js.map",
     "static/js/2.e588b779.chunk.js": "/antispoofing_frontend/static/js/2.e588b779.chunk.js",
@@ -17,6 +17,6 @@
     "static/js/runtime-main.4e3ca355.js",
     "static/js/2.e588b779.chunk.js",
     "static/css/main.31026e0a.chunk.css",
-    "static/js/main.33fac89e.chunk.js"
+    "static/js/main.b97c128a.chunk.js"
   ]
 }
