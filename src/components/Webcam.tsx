@@ -152,7 +152,7 @@ export const Webcam = (props: WebcamProps) => {
             const result = await props.submitImage!(encodeFrame(), props.faceID);
             if (result.face_score < 0.7) 
                 resetDropTimeout();
-            const isSuccessful = result.spoofing < 0.3 && result.face_score < 0.7;
+            const isSuccessful = result.spoofing < 0.4 && result.face_score < 0.7;
             setCurrentFaceArea({
                 ...result.bbox,
                 color: isSuccessful ? 'green' : 'blue'
