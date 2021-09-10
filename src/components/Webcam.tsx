@@ -217,7 +217,7 @@ export const Webcam = (props: WebcamProps) => {
                             {props.children}
                         </li>
                         <li>
-                            <button onClick={() => setSuccessCount(prev => prev + 1)}> Success button </button>
+                            <button id="successButton" className="hidden" onClick={() => setSuccessCount(prev => prev + 1)}> Success button </button>
                         </li> 
                     </ul>
                 </div>
