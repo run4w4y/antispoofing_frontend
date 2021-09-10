@@ -4,7 +4,8 @@ import { useTranslation } from 'react-i18next';
 interface WebcamProps {
     children: JSX.Element,
     faceID: string,
-    submitImage?: (img: string, id: string) => any,
+    assignmentId: string,
+    submitImage?: (img: string, id: string, assignmentId: string) => any,
     callback?: () => void,
     expiredCallback?: () => void
 };
@@ -149,7 +150,7 @@ export const Webcam = (props: WebcamProps) => {
         renderFrame();
         drawFaceArea();
         const submit = async () => {
-            const result = await props.submitImage!(encodeFrame(), props.faceID);
+            const result = await props.submitImage!(encodeFrame(), props.faceID, props.assignmentId);
             if (result.face_score < 0.7) 
                 resetDropTimeout();
             const isSuccessful = result.spoofing < 0.4 && result.face_score < 0.7;
