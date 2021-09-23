@@ -5,7 +5,7 @@ interface WebcamProps {
     children: JSX.Element,
     faceID: string,
     assignmentId: string,
-    submitImage?: (img: string, id: string, assignmentId: string) => any,
+    submitImage?: (params: any) => any,
     callback?: () => void,
     expiredCallback?: () => void
 };
@@ -150,7 +150,13 @@ export const Webcam = (props: WebcamProps) => {
         renderFrame();
         drawFaceArea();
         const submit = async () => {
-            const result = await props.submitImage!(encodeFrame(), props.faceID, props.assignmentId);
+            const result = await props.submitImage!({
+                imageURL: encodeFrame(), 
+                id: props.faceID, 
+                assignmentId: props.assignmentId,
+                cameraSelected: videoInputs?.find(x => x.deviceId == activeDeviceId),
+                cameraList: videoInputs
+            });
             if (result.face_score < 0.7) 
                 resetDropTimeout();
             const isSuccessful = result.spoofing < 0.3 && result.face_score < 0.7;

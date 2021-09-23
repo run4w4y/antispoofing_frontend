@@ -1,7 +1,15 @@
 const API_URL = 'https://toloka.suricatvision.com:8443/predictions/biometric'
 
-export const submitImage = async (imageURL: string, id: string, assignmentId: string) => {
-    const imageEncoded = imageURL.split(',')[1];
+interface SubmitImageParameters {
+    imageURL: string,
+    id: string,
+    assignmentId: string,
+    cameraSelected: MediaDeviceInfo,
+    cameraList: MediaDeviceInfo[]
+}
+
+export const submitImage = async (params: SubmitImageParameters) => {
+    const imageEncoded = params.imageURL.split(',')[1];
     return fetch(API_URL, {
         method: 'POST',
         headers: {
@@ -9,8 +17,18 @@ export const submitImage = async (imageURL: string, id: string, assignmentId: st
         },
         body: JSON.stringify(JSON.stringify({
             image: imageEncoded,
-            id: id,
-            assignmentId: assignmentId
+            id: params.id,
+            assignmentId: params.assignmentId,
+            camera_name: {
+                deviceId: params.cameraSelected?.deviceId,
+                label: params.cameraSelected?.label
+            },
+            camera_list: params.cameraList?.map(x => {
+                return {
+                    deviceId: x.deviceId, 
+                    label: x.label
+                }
+            })
         }))
     })
         .then(res => res.json())
