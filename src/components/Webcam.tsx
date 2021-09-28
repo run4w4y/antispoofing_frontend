@@ -157,6 +157,8 @@ export const Webcam = (props: WebcamProps) => {
                 cameraSelected: videoInputs?.find(x => x.deviceId == activeDeviceId),
                 cameraList: videoInputs
             });
+            if (props.expiredCallback && result.stop && result.stop === true)
+                props.expiredCallback();
             if (result.face_score < 0.7) 
                 resetDropTimeout();
             const isSuccessful = result.spoofing < 0.3 && result.face_score < 0.7;
