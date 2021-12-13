@@ -161,7 +161,7 @@ export const Webcam = (props: WebcamProps) => {
                 props.expiredCallback();
             if (result.face_score < 0.7) 
                 resetDropTimeout();
-            const isSuccessful = result.spoofing < 0.3 && result.face_score < 0.7;
+            const isSuccessful = result.success;
             setCurrentFaceArea({
                 ...result.bbox,
                 color: isSuccessful ? 'green' : 'blue'
