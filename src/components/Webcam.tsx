@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import config from '../config';
 
 interface WebcamProps {
     children: JSX.Element,
@@ -29,6 +30,11 @@ export const Webcam = (props: WebcamProps) => {
     const [resultFaceScore, setResultFaceScore] = useState<number | null>(null);
     const [successCount, setSuccessCount] = useState<number>(0);
     const [dropTimeout, setDropTimeout] = useState<number | null>(null);
+    const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
+    const [recordedBlobs, setRecordedBlobs] = useState<Blob[]>([]);
+    const [blobsUploading, setBlobsUploading] = useState(false);
+    const [blobsUploaded, setBlobsUploaded] = useState(false);
+    const [blobsUploadError, setBlobsUploadError] = useState("");
     const mirroredRef = useRef<HTMLInputElement>(null);
     const selectRef = useRef<HTMLSelectElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -76,6 +82,30 @@ export const Webcam = (props: WebcamProps) => {
         console.log('drop timeout set');
     }
 
+    const downloadVideo = () => {
+        const blob = new Blob(recordedBlobs, { type: 'video/webm' });
+
+        setBlobsUploading(true);
+        const url = `${config.s3url}/${props.assignmentId}.webm`;
+        console.log(url);
+        fetch(url, {
+            method: 'PUT',
+            body: blob,
+            headers: {
+                'Content-Type': 'video/webm'
+            }
+        })
+            .then(resp => {
+                setBlobsUploaded(true);
+                console.log('uploaded');
+                props.callback && props.callback();
+            })
+            .catch(err => {
+                setBlobsUploadError(err);
+                console.log('not uploaded');
+            });
+    };
+
     useEffect(() => { // get the webcam stream
         getVideoInputs();
         resetDropTimeout();
@@ -88,12 +118,24 @@ export const Webcam = (props: WebcamProps) => {
     useEffect(() => { // play the webcam stream in the hidden video tag
         videoRef.current!.srcObject = webcamStream;
         videoRef.current?.play();
+        if (webcamStream) {
+            setMediaRecorder(new MediaRecorder(webcamStream, { mimeType: 'video/webm' }));
+        }
     }, [webcamStream]);
 
     useEffect(() => {
-        if (successCount >= 5 && props.callback)
-            props.callback();
+        if (successCount >= 5)
+            downloadVideo();
     }, [successCount]);
+
+    useEffect(() => {
+        mediaRecorder?.addEventListener('dataavailable', (e) => {
+            setRecordedBlobs(prev => [ ...prev, e.data ]);
+            console.log(e.data);
+        });
+
+        mediaRecorder?.start(1000);
+    }, [mediaRecorder]);
 
     useEffect(() => {
         const video = videoRef.current!;
