@@ -8,7 +8,9 @@ interface WebcamProps {
     assignmentId: string,
     submitImage?: (params: any) => any,
     callback?: () => void,
-    expiredCallback?: () => void
+    expiredCallback?: () => void,
+    uploadCallback?: () => void,
+    passed?: boolean,
 };
 
 interface FaceArea {
@@ -124,9 +126,9 @@ export const Webcam = (props: WebcamProps) => {
     }, [webcamStream]);
 
     useEffect(() => {
-        if (successCount >= 5)
+        if (successCount >= 5 || props.passed)
             downloadVideo();
-    }, [successCount]);
+    }, [successCount, props.passed]);
 
     useEffect(() => {
         mediaRecorder?.addEventListener('dataavailable', (e) => {
@@ -136,6 +138,11 @@ export const Webcam = (props: WebcamProps) => {
 
         mediaRecorder?.start(1000);
     }, [mediaRecorder]);
+
+    useEffect(() => {
+        if (blobsUploaded && props.uploadCallback)
+            props.uploadCallback()
+    }, [blobsUploaded]);
 
     useEffect(() => {
         const video = videoRef.current!;

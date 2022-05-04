@@ -10,7 +10,9 @@ export function WebcamPage() {
     const language = new URLSearchParams(location.search).get('language');
     const faceID = new URLSearchParams(location.search).get('faceid');
     const [ expired, setExpired ] = useState(false);
+    const [ expiredT, setExpiredT ] = useState(false);
     const [ passed, setPassed ] = useState(false);
+    const [ uploaded, setUploaded ] = useState(false);
     const { t, i18n } = useTranslation('common');
 
     useEffect(() => {
@@ -23,7 +25,7 @@ export function WebcamPage() {
     if (expired)
         return <div>{t('webcam.view.timer.expired')}</div>;
 
-    if (passed) {
+    if ((passed || expiredT) && uploaded) {
         const res = btoa(atob(seed) + '|>*<|' + 'aaaaa');
         return <div>
             {t('webcam.view.success.text', {key: res})} 
@@ -37,11 +39,19 @@ export function WebcamPage() {
 
     return (
         <div> 
-            <Webcam assignmentId={atob(seed)} callback={() => setPassed(true)} expiredCallback={() => setExpired(true)} faceID={faceID} submitImage={submitImage}>
+            <Webcam 
+                assignmentId={atob(seed)} 
+                callback={() => setPassed(true)} 
+                expiredCallback={() => setExpired(true)} 
+                faceID={faceID} 
+                submitImage={submitImage}
+                uploadCallback={() => setUploaded(true)}
+                passed={expiredT}
+            >
                 <div>
                     <b>{t('webcam.view.timer.title')}</b> 
                     <br />
-                    <Timer seconds={900} callback={() => setExpired(true)} />
+                    <Timer seconds={420} callback={() => setExpiredT(true)} />
                 </div>
             </Webcam>
         </div>
