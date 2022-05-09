@@ -22,7 +22,7 @@
                 "expired": "Time limit was reached. Try again later."
             },
             "success": {
-                "text": "5 successful attempts were reached, here's your key: {{key}}",
+                "text": "In accordance with your successful attacks you will be given bonuses. Enter key to register your session: {{key}}",
                 "copy_button": "Copy to clipboard"
             }
         }
