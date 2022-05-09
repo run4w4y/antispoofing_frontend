@@ -22,9 +22,6 @@ export function WebcamPage() {
     if (!faceID || !seed)
         return <div></div>;
 
-    if (expired)
-        return <div>{t('webcam.view.timer.expired')}</div>;
-
     if ((passed || expiredT) && uploaded) {
         const res = btoa(atob(seed) + '|>*<|' + 'aaaaa');
         return <div>
@@ -36,6 +33,9 @@ export function WebcamPage() {
             </button>
         </div>;
     }
+
+    if (expired)
+        return <div>{t('webcam.view.timer.expired')}</div>;
 
     return (
         <div> 
