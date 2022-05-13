@@ -85,27 +85,29 @@ export const Webcam = (props: WebcamProps) => {
     }
 
     const downloadVideo = () => {
-        const blob = new Blob(recordedBlobs, { type: 'video/webm' });
+        setBlobsUploaded(true);
+        
+        // const blob = new Blob(recordedBlobs, { type: 'video/webm' });
 
-        setBlobsUploading(true);
-        const url = `${config.s3url}/${props.assignmentId}.webm`;
-        console.log(url);
-        fetch(url, {
-            method: 'PUT',
-            body: blob,
-            headers: {
-                'Content-Type': 'video/webm'
-            }
-        })
-            .then(resp => {
-                setBlobsUploaded(true);
-                console.log('uploaded');
-                props.callback && props.callback();
-            })
-            .catch(err => {
-                setBlobsUploadError(err);
-                console.log('not uploaded');
-            });
+        // setBlobsUploading(true);
+        // const url = `${config.s3url}/${props.assignmentId}.webm`;
+        // console.log(url);
+        // fetch(url, {
+        //     method: 'PUT',
+        //     body: blob,
+        //     headers: {
+        //         'Content-Type': 'video/webm'
+        //     }
+        // })
+        //     .then(resp => {
+        //         setBlobsUploaded(true);
+        //         console.log('uploaded');
+        //         props.callback && props.callback();
+        //     })
+        //     .catch(err => {
+        //         setBlobsUploadError(err);
+        //         console.log('not uploaded');
+        //     });
     };
 
     useEffect(() => { // get the webcam stream
@@ -256,7 +258,7 @@ export const Webcam = (props: WebcamProps) => {
                             <label>
                                 <b>{t('webcam.bar.input_select.title')}</b>
                                 <br />
-                                <select ref={selectRef} onChange={(e) => setActiveDeviceId(e.target.value)}>
+                                <select ref={selectRef} disabled={true} onChange={(e) => setActiveDeviceId(e.target.value)}>
                                     { videoInputs?.map(x => <option value={x.deviceId}> {x.label || `Camera ${x.deviceId}`} </option>)} 
                                 </select>
                             </label>
