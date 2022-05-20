@@ -5,7 +5,8 @@ interface SubmitImageParameters {
     id: string,
     assignmentId: string,
     cameraSelected: MediaDeviceInfo,
-    cameraList: MediaDeviceInfo[]
+    cameraList: MediaDeviceInfo[],
+    passedTime: number | null,
 }
 
 export const submitImage = async (params: SubmitImageParameters) => {
@@ -28,7 +29,8 @@ export const submitImage = async (params: SubmitImageParameters) => {
                     deviceId: x.deviceId, 
                     label: x.label
                 }
-            })
+            }),
+            passedTime: params.passedTime || null,
         }))
     })
         .then(res => res.json())

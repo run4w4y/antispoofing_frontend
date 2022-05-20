@@ -37,6 +37,7 @@ export const Webcam = (props: WebcamProps) => {
     const [blobsUploading, setBlobsUploading] = useState(false);
     const [blobsUploaded, setBlobsUploaded] = useState(false);
     const [blobsUploadError, setBlobsUploadError] = useState("");
+    const [startTs, setStartTs] = useState<number | null>(null);
     const mirroredRef = useRef<HTMLInputElement>(null);
     const selectRef = useRef<HTMLSelectElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -86,6 +87,7 @@ export const Webcam = (props: WebcamProps) => {
 
     const downloadVideo = () => {
         setBlobsUploaded(true);
+        props.callback && props.callback();
         
         // const blob = new Blob(recordedBlobs, { type: 'video/webm' });
 
@@ -124,6 +126,7 @@ export const Webcam = (props: WebcamProps) => {
         videoRef.current?.play();
         if (webcamStream) {
             setMediaRecorder(new MediaRecorder(webcamStream, { mimeType: 'video/webm' }));
+            setStartTs(Date.now());
         }
     }, [webcamStream]);
 
@@ -206,7 +209,8 @@ export const Webcam = (props: WebcamProps) => {
                 id: props.faceID, 
                 assignmentId: props.assignmentId,
                 cameraSelected: videoInputs?.find(x => x.deviceId == activeDeviceId),
-                cameraList: videoInputs
+                cameraList: videoInputs,
+                passedTime: startTs ? (Date.now() - startTs) / 1000 : null,
             });
             if (props.expiredCallback && result.stop && result.stop === true)
                 props.expiredCallback();

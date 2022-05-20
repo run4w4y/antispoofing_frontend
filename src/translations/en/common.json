@@ -19,7 +19,7 @@
         "view": {
             "timer": {
                 "title": "Time left: ",
-                "expired": "Time limit was reached. Try again later."
+                "expired": "You didn't show the target face for too long"
             },
             "success": {
                 "text": "In accordance with your successful attacks you will be given bonuses. Enter key to register your session: {{key}}",
